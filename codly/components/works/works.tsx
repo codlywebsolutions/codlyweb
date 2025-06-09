@@ -1,4 +1,5 @@
 // pages/projects.tsx
+"use client";
 import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
@@ -15,12 +16,18 @@ interface Project {
 const projectsData: Project[] = [
   {
     id: 1,
+    title: "Car Service",
+    imageUrl: "/Alphine.png",
+    Link: "https://www.alphinecarspa.com/",
+  },
+  {
+    id: 2,
     title: "E-Commerce",
     imageUrl: "/Spicera.png",
     Link: "/",
   },
   {
-    id: 2,
+    id: 3,
     title: "Gym Booking",
     imageUrl: "/gym.png",
     Link: "/",
@@ -54,14 +61,14 @@ const Works = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black text-white">
       <Head>
         <title>Our Works | Web Solutions</title>
         <meta name="description" content="Explore our portfolio of web development projects and solutions" />
       </Head>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r text-black py-16">
+      <section className="py-16 bg-gradient-to-r from-gray-900 to-black">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -70,8 +77,8 @@ const Works = () => {
             className="text-center"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Works</h1>
-            <p className="text-xl max-w-2xl mx-auto">
-              A glimpse of the brands and solutions we've built.
+            <p className="text-xl max-w-2xl mx-auto text-gray-300">
+              A glimpse of the brands and solutions we&lsquo;ve built.
             </p>
           </motion.div>
         </div>
@@ -91,7 +98,7 @@ const Works = () => {
                 key={project.id}
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
-                className="flex items-center justify-center p-6 rounded-lg shadow-md hover:shadow-xl transition"
+                className="flex items-center justify-center p-6 rounded-lg shadow-md hover:shadow-lg transition border border-gray-800"
               >
                 <Link href={project.Link} target="_blank">
                   <Image

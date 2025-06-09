@@ -1,8 +1,8 @@
+"use client";
 import React from 'react'
 import { motion } from "framer-motion";
 
 const Services = () => {
-  // Define our service items
   type ServiceItem = {
     title: string;
     description: string;
@@ -17,9 +17,9 @@ const Services = () => {
       icon: "💻",
     },
     {
-      title: "WordPress Development & SEO Optimization",
+      title: "SEO Services",
       description:
-        "Custom WordPress solutions and SEO strategies to enhance your online visibility.",
+        "SEO strategies to enhance your online visibility.",
       icon: "🌐",
     },
     {
@@ -41,7 +41,6 @@ const Services = () => {
       icon: "☁️",
     },
   ];
-  
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -63,7 +62,7 @@ const Services = () => {
   };
 
   return (
-    <div className="bg-white py-24">
+    <div className="bg-black py-24 text-white">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <motion.div
           className="mx-auto max-w-2xl text-center"
@@ -72,13 +71,13 @@ const Services = () => {
           viewport={{ once: true }}
           variants={fadeIn}
         >
-          <h2 className="text-base font-semibold text-indigo-600">
+          <h2 className="text-base font-semibold text-indigo-400">
             Our Services
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Empowering Your Business
           </p>
-          <p className="mt-6 text-lg text-gray-600">
+          <p className="mt-6 text-lg text-gray-300">
             We deliver tailored solutions to elevate your digital presence and business operations.
           </p>
         </motion.div>
@@ -93,19 +92,19 @@ const Services = () => {
             {services.map((service) => (
               <motion.div
                 key={service.title}
-                className="relative bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
+                className="relative bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow border border-gray-800"
                 variants={fadeIn}
                 whileHover={{ y: -5, transition: { duration: 0.2 } }}
               >
                 <dt className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-2xl">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r  text-white text-2xl">
                     <span>{service.icon}</span>
                   </div>
-                  <p className="text-lg font-semibold leading-8 text-gray-900">
+                  <p className="text-lg font-semibold leading-8 text-white">
                     {service.title}
                   </p>
                 </dt>
-                <dd className="mt-4 text-base text-gray-600">
+                <dd className="mt-4 text-base text-gray-400">
                   {service.description}
                 </dd>
               </motion.div>
@@ -114,7 +113,7 @@ const Services = () => {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Services
+export default Services;

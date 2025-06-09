@@ -12,8 +12,7 @@ type NavItem = {
 };
 
 const navigation: NavItem[] = [
-  { name: 'Features', href: '/features' },
-  { name: 'Pricing', href: '/pricing' },
+  { name: 'Services', href: '/services' },
   { name: 'About', href: '/about' },
   { name: 'Contact', href: '/contact' },
 ];
@@ -36,31 +35,14 @@ const Navbar = () => {
   }, []);
 
   // Animation variants
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6 }
-    }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
+ 
   return (
-    <div><header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+    <div><header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/10 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
     <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
       <div className="w-full py-5 flex items-center justify-between">
-        <div className="flex items-center">
+        <div className="flex items-center ">
           <Link href="/">
- <Image src={"/logo.png"} className='w-20 h-20  'alt={''}  width={100} height={100}/>
+ <Image src={"/logo3.png"} className='w-44 h-14  'alt={''}  width={100} height={100}/>
           </Link>
           <div className="hidden ml-10 space-x-8 lg:flex">
             {navigation.map((link) => (
