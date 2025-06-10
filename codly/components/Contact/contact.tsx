@@ -87,8 +87,8 @@ const Contact = () => {
 
     try {
       const response = await emailjs.send(
-        "service_5f8nzwq",
-        "template_0w5ttyg",
+        "service_irisd1w",
+        "template_q818kbq",
         {
           from_name: formData.name,
           from_email: formData.email,
@@ -115,7 +115,7 @@ console.log("EmailJS response:", response);
       setStatus({
         type: "error",
         message:
-          "Sorry, there was an error processing your request. Please call us directly at +1 (802) 477-3138.",
+          "Sorry, there was an error processing your request. Please call us directly at +919947414953.",
       });
     } finally {
       setIsSubmitting(false);
@@ -136,8 +136,7 @@ console.log("EmailJS response:", response);
             Contact <span className="text-blue-400">Us</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Get in touch with us for premium car detailing services. We&rsquo;re here
-            to make your vehicle shine like new.
+            Get in touch with us for premium web solutions. We&rsquo;re here to make your online presence shine like never before.
           </p>
         </div>
       </div>
@@ -147,7 +146,7 @@ console.log("EmailJS response:", response);
           {/* Contact Form */}
           <div className="bg-gray-900 p-8 rounded-xl border border-gray-800">
             <h2 className="text-3xl font-bold mb-6 text-blue-400">
-              Let&lsquo;s get you booked—drop us a message now!
+             Let&lsquo;s Talk — Drop Us a Message!
             </h2>
 
             {status.type && (
