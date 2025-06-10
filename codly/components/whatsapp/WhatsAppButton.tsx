@@ -1,7 +1,7 @@
 
 import React from "react";
-import { MessageCircle } from "lucide-react"; // or use WhatsApp icon from react-icons or custom SVG
 import Link from "next/link";
+import Image from "next/image";
 
 const WhatsAppButton = () => {
   return (
@@ -9,9 +9,9 @@ const WhatsAppButton = () => {
       href="https://wa.me/+919947414953" // replace with your WhatsApp number
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-10 right-10 z-50 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-colors"
+      className="fixed bottom-16 right-16 z-50   p-3 rounded-full shadow-lg "
     >
-      <MessageCircle className="w-6 h-6" /> {/* Replace with WhatsApp icon if needed */}
+      <Image src={"/w.png"} alt="" height={1000} width={1000} className="md:w-20 md:h-20 h-16 w-16 hover: transition-shadow" /> {/* Replace with WhatsApp icon if needed */}
     </Link>
   );
 };
