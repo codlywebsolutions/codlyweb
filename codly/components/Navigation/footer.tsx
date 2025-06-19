@@ -101,14 +101,13 @@ const Footer = () => {
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-gray-400" />
-                <a href="tel:+919947414953" className="hover:text-white transition-colors">+919947414953</a>
+                <a href="tel:+919037314953" className="hover:text-white transition-colors">+919037314953</a>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-gray-400" />
                 <a href="mailto:alphinecarspa@gmail.com" className="hover:text-white transition-colors">codlywebsolutions@gmail.com</a>
               </li>
             </ul>
-
             <Link
               href="/contact"
               className="inline-block bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-300 mt-4"
@@ -118,7 +117,6 @@ const Footer = () => {
           </address>
         </div>
       </div>
-
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
         <div className="container mx-auto px-6 py-6">

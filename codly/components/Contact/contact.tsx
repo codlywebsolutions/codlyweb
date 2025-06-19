@@ -271,7 +271,7 @@ console.log("EmailJS response:", response);
             </div>
             <div className="my-5">
               <Link
-                href="https://wa.link/w8eju6"
+                href="https://wa.me/+919037314953"
                 className="bg-white text-gray-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2"
               >
                 <MessageCircle className="w-5 h-5" />

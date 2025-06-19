@@ -1,12 +1,10 @@
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-
 const WhatsAppButton = () => {
   return (
     <Link
-      href="https://wa.me/+919947414953" // replace with your WhatsApp number
+      href="https://wa.me/+919037314953" // replace with your WhatsApp number
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-10 right-10 z-50   p-3 rounded-full shadow-lg "
@@ -15,5 +13,4 @@ const WhatsAppButton = () => {
     </Link>
   );
 };
-
 export default WhatsAppButton;

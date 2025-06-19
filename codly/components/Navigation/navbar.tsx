@@ -47,7 +47,7 @@ const Navbar = () => {
           <div className="hidden ml-10 space-x-8 lg:flex">
             {navigation.map((link) => (
               <Link key={link.name} href={link.href}>
-                <span className="text-base font-medium text-gray-700 hover:text-indigo-600 transition-colors">
+                <span className="text-base font-medium text-white hover:text-indigo-600 transition-colors">
                   {link.name}
                 </span>
               </Link>
