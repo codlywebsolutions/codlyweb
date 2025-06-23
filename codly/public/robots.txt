@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://codlywebsolutions.site
+
+# Sitemaps
+Sitemap: https://codlywebsolutions.site/sitemap.xml

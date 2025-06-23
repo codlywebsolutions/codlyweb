@@ -1,385 +1,212 @@
 "use client"
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
+import React, { useRef, useEffect, useState } from "react";
+import { gsap } from "gsap";
+import Image from "next/image";
+import Link from "next/link";
+
+const SHAPE_COUNT = 8;
+
+function getRandomShapes() {
+  return Array.from({ length: SHAPE_COUNT }).map((_, i) => {
+    const shapeType = i % 3;
+    const size = Math.random() * (120 - 60) + 60;
+    const top = Math.random() * (80 - 5) + 5;
+    const left = Math.random() * (80 - 5) + 5;
+    return { shapeType, size, top, left };
+  });
+}
 
 const Hero = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
+  const btn1Ref = useRef<HTMLButtonElement | null>(null);
+  const btn2Ref = useRef<HTMLButtonElement | null>(null);
+  const shapesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Store random shapes only on the client
+  const [shapes, setShapes] = useState<{ shapeType: number, size: number, top: number, left: number }[]>([]);
+
+  // Entrance and floating animation
   useEffect(() => {
-    const handleMouseMove = (e:MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    gsap.fromTo(
+      headlineRef.current,
+      { y: 60, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+    );
+    gsap.fromTo(
+      subRef.current,
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, delay: 0.3, ease: "power3.out" }
+    );
+    gsap.fromTo(
+      [btn1Ref.current, btn2Ref.current],
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, delay: 0.6, stagger: 0.1, ease: "power3.out" }
+    );
+    // Animate shapes in and start floating
+    shapesRef.current.forEach((el, i) => {
+      if (!el) return;
+      gsap.fromTo(
+        el,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 0.18 + i * 0.07,
+          duration: 1,
+          delay: 0.5 + i * 0.12,
+          ease: "back.out(2)",
+          onComplete: () => {
+            // Floating animation
+            gsap.to(el, {
+              y: `+=${randomBetween(-30, 30)}`,
+              x: `+=${randomBetween(-30, 30)}`,
+              repeat: -1,
+              yoyo: true,
+              duration: randomBetween(3, 6),
+              ease: "sine.inOut",
+              delay: 0.2 * i,
+            });
+          },
+        }
+      );
+    });
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2
-      }
+  useEffect(() => {
+    setShapes(getRandomShapes());
+  }, []);
+
+  // Parallax effect on mouse move
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { innerWidth, innerHeight } = window;
+      const x = (e.clientX / innerWidth - 0.5) * 2;
+      const y = (e.clientY / innerHeight - 0.5) * 2;
+      shapesRef.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.to(el, {
+          x: `+=${x * (10 + i * 4)}`,
+          y: `+=${y * (10 + i * 4)}`,
+          duration: 0.6,
+          ease: "power2.out",
+        });
+      });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // Hover effects for buttons
+  const handleBtnHover = (ref: React.RefObject<HTMLButtonElement | null>) => {
+    if (ref.current) {
+      gsap.to(ref.current, { scale: 1.08, boxShadow: "0 4px 24px #fff", duration: 0.2 });
+    }
+  };
+  const handleBtnLeave = (ref: React.RefObject<HTMLButtonElement | null>) => {
+    if (ref.current) {
+      gsap.to(ref.current, { scale: 1, boxShadow: "0 0px 0px #fff", duration: 0.2 });
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
+  // Hover effect for headline
+  const handleHeadlineHover = () => {
+    gsap.to(headlineRef.current, { letterSpacing: 4, color: "#fff", duration: 0.2 });
+  };
+  const handleHeadlineLeave = () => {
+    gsap.to(headlineRef.current, { letterSpacing: 0, color: "#fff", duration: 0.2 });
   };
 
-  const floatingVariants = {
-    animate: {
-      y: [-10, 10, -10],
-      rotate: [0, 5, -5, 0],
-      transition: {
-        duration: 6,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-
-  const glowVariants = {
-    animate: {
-      scale: [1, 1.1, 1],
-      opacity: [0.5, 0.8, 0.5],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
+  const renderShapes = () =>
+    shapes.map((shape, i) => {
+      const border = shape.shapeType === 1 ? "border-2 border-white" : "border border-gray-500";
+      const opacity = 0.18 + i * 0.07;
+      let shapeClass = "";
+      if (shape.shapeType === 0) shapeClass = "rounded-full bg-white/10";
+      if (shape.shapeType === 1) shapeClass = "rounded-lg bg-white/5";
+      if (shape.shapeType === 2) shapeClass = "clip-triangle bg-white/10";
+      return (
+        <div
+          key={i}
+          ref={el => { shapesRef.current[i] = el; }}
+          className={`absolute ${border} ${shapeClass} pointer-events-none`}
+          style={{
+            width: shape.size,
+            height: shape.size,
+            top: `${shape.top}%`,
+            left: `${shape.left}%`,
+            opacity,
+            filter: "blur(1px)",
+            zIndex: 1,
+          }}
+        />
+      );
+    });
 
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden">
-      {/* Dynamic Background */}
-      <div className="absolute inset-0">
-        {/* Animated gradient overlay */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-gray-900/20 via-black to-gray-800/20"
-          animate={{
-            background: [
-              "linear-gradient(135deg, rgba(75, 85, 99, 0.1) 0%, rgba(0, 0, 0, 1) 50%, rgba(107, 114, 128, 0.1) 100%)",
-              "linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(0, 0, 0, 1) 50%, rgba(75, 85, 99, 0.1) 100%)",
-              "linear-gradient(135deg, rgba(75, 85, 99, 0.1) 0%, rgba(0, 0, 0, 1) 50%, rgba(107, 114, 128, 0.1) 100%)"
-            ]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        
-        {/* Interactive mouse-following glow */}
-        <motion.div
-          className="absolute w-96 h-96 rounded-full opacity-20 pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%)",
-            left: `${mousePosition.x}%`,
-            top: `${mousePosition.y}%`,
-            transform: "translate(-50%, -50%)"
-          }}
-          transition={{ type: "spring", damping: 30, stiffness: 100 }}
-        />
-        
-        {/* Floating geometric shapes */}
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-32 h-32 border border-gray-500/30 rotate-45"
-          variants={floatingVariants}
-          animate="animate"
-        />
-        <motion.div
-          className="absolute top-3/4 right-1/4 w-24 h-24 border border-gray-400/30 rounded-full"
-          variants={floatingVariants}
-          animate="animate"
-          transition={{ delay: 2 }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 left-1/3 w-16 h-16 bg-gradient-to-r from-gray-500/20 to-gray-400/20 rotate-12"
-          variants={floatingVariants}
-          animate="animate"
-          transition={{ delay: 4 }}
-        />
+    <header className="relative min-h-screen bg-black overflow-hidden flex items-center" aria-label="Hero section">
+      {/* Floating geometric shapes */}
+      <div className="absolute inset-0 pointer-events-none">
+        {renderShapes()}
+        {/* Triangle clip-path utility */}
+        <style>{`
+          .clip-triangle {
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+          }
+        `}</style>
       </div>
 
-      {/* Grid Pattern */}
-      <div 
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px'
-        }}
-      />
-
-      {/* Main Content */}
-      <div className="relative z-10 flex items-center min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            
-            {/* Left Content */}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-8"
+      <main className="relative z-10 w-full">
+        <div className="max-w-5xl mx-auto px-4 py-24 flex flex-col items-start">
+          <h1
+            ref={headlineRef}
+            className="text-white text-5xl md:text-7xl font-extrabold tracking-tight mb-8 transition-all"
+            onMouseEnter={handleHeadlineHover}
+            onMouseLeave={handleHeadlineLeave}
+          >
+            Build <span className="text-gray-300">Smarter</span>
+            <br />
+            <span className="text-gray-400">Scale</span> <span className="text-white">Faster</span>
+          </h1>
+          <p
+            ref={subRef}
+            className="text-gray-300 text-xl md:text-2xl mb-10 max-w-2xl"
+          >
+            Transform your digital presence with <span className="text-white font-semibold">Codly</span>. Modern, minimal, and lightning fast web solutions.
+          </p>
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+            <button
+              ref={btn1Ref}
+              className="px-8 py-4 bg-white text-black font-bold text-lg rounded-full shadow transition-all"
+              onMouseEnter={() => handleBtnHover(btn1Ref)}
+              onMouseLeave={() => handleBtnLeave(btn1Ref)}
             >
-              <motion.div variants={itemVariants}>
-               
-                
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight">
-                  <motion.span 
-                    className="block text-white"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    Build
-                  </motion.span>
-                  <motion.span 
-                    className="block bg-gradient-to-r from-gray-400 via-white to-gray-300 bg-clip-text text-transparent"
-                    animate={{
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                    style={{
-                      backgroundSize: "200% 200%"
-                    }}
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    Smarter
-                  </motion.span>
-                  <motion.span 
-                    className="block text-white"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    Scale
-                  </motion.span>
-                  <motion.span 
-                    className="block bg-gradient-to-r from-white via-gray-300 to-gray-400 bg-clip-text text-transparent"
-                    animate={{
-                      backgroundPosition: ["100% 50%", "0% 50%", "100% 50%"],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                    style={{
-                      backgroundSize: "200% 200%"
-                    }}
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    Faster
-                  </motion.span>
-                </h1>
-              </motion.div>
-
-              <motion.p 
-                className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-2xl"
-                variants={itemVariants}
-              >
-                Transform your digital presence with cutting-edge web solutions that captivate, convert, and scale.{" "}
-                <span className="text-white font-semibold">Codly</span> – where innovation meets excellence.
-              </motion.p>
-
-              <motion.div 
-                className="flex flex-col sm:flex-row gap-6"
-                variants={itemVariants}
-              >
-                <motion.button
-                  className="group relative px-8 py-4 bg-gradient-to-r from-gray-600 to-gray-800 text-white font-bold text-lg rounded-2xl overflow-hidden"
-                  whileHover={{ 
-                    scale: 1.05,
-                    boxShadow: "0 20px 40px rgba(255, 255, 255, 0.4)"
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-gray-400 to-gray-600 opacity-0 group-hover:opacity-100"
-                    transition={{ duration: 0.3 }}
-                  />
-                  <Link href={'/contact'} className="relative z-10 flex items-center gap-2">
-                    Start Your Project
-                    <motion.span
-                      animate={{ x: [0, 4, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    >
-                      →
-                    </motion.span>
-                  </Link>
-                </motion.button>
-
-                <motion.button
-                  className="group px-8 py-4 border-2 border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white font-bold text-lg rounded-2xl transition-all duration-300"
-                  whileHover={{ 
-                    scale: 1.05,
-                    backgroundColor: "rgba(255, 255, 255, 0.1)"
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Link href={"/work"} className="flex items-center gap-2">
-                    View Portfolio
-                    <motion.span
-                      className="w-2 h-2 bg-white rounded-full"
-                      animate={{ scale: [1, 1.5, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                  </Link>
-                </motion.button>
-              </motion.div>
-              
-             
-            </motion.div>
-
-            {/* Right Visual */}
-            <motion.div
-              className="relative flex justify-center items-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
+              <Link href="/contact">Start Your Project</Link>
+            </button>
+            <button
+              ref={btn2Ref}
+              className="px-8 py-4 border-2 border-white text-white font-bold text-lg rounded-full transition-all"
+              onMouseEnter={() => handleBtnHover(btn2Ref)}
+              onMouseLeave={() => handleBtnLeave(btn2Ref)}
             >
-              {/* Main Logo Container */}
-              <motion.div
-                className="relative w-80 h-80 flex items-center justify-center"
-                variants={glowVariants}
-                animate="animate"
-              >
-                {/* Rotating rings */}
-                <motion.div
-                  className="absolute inset-0 border-2 border-gray-500/30 rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                />
-                <motion.div
-                  className="absolute inset-4 border border-gray-400/20 rounded-full"
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                />
-                <motion.div
-                  className="absolute inset-8 border border-gray-300/10 rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Central glow */}
-                <motion.div
-                  className="absolute inset-16 bg-gradient-to-r from-gray-500/20 to-gray-400/20 rounded-full filter blur-xl"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.3, 0.6, 0.3]
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                />
-
-                {/* Logo placeholder - replace with your actual logo */}
-                <motion.div
-                  className="relative z-10 w-32 h-32 bg-gradient-to-br from-gray-500 to-gray-700 rounded-2xl flex items-center justify-center text-white font-black text-3xl"
-                  whileHover={{ 
-                    scale: 1.1,
-                    rotate: 5,
-                    boxShadow: "0 20px 40px rgba(255, 255, 255, 0.6)"
-                  }}
-                  animate={{
-                    y: [-5, 5, -5],
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <div className="w-20 h-20 bg-white rounded-lg flex items-center justify-center text-black font-bold text-2xl">
-                 <Image src={"/logo2.png"} className='w-20 h-20  'alt={''}  width={100} height={100}/>
-                  </div>
-                </motion.div>
-
-                {/* Orbiting elements */}
-                {[...Array(6)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute w-3 h-3 bg-gradient-to-r from-gray-400 to-white rounded-full"
-                    style={{
-                      top: "50%",
-                      left: "50%",
-                      originX: 0.5,
-                      originY: 0.5,
-                    }}
-                    animate={{
-                      rotate: 360,
-                      x: Math.cos((i * 60) * Math.PI / 180) * 120,
-                      y: Math.sin((i * 60) * Math.PI / 180) * 120,
-                    }}
-                    transition={{
-                      duration: 8,
-                      repeat: Infinity,
-                      ease: "linear",
-                      delay: i * 0.2
-                    }}
-                  />
-                ))}
-              </motion.div>
-
-              {/* Floating cards */}
-              <motion.div
-                className="absolute -top-8 -right-8 w-24 h-16 bg-gradient-to-r from-gray-600/80 to-gray-800/80 backdrop-blur-sm rounded-lg border border-gray-500/30 flex items-center justify-center text-white text-xs font-bold"
-                animate={{
-                  y: [-10, 10, -10],
-                  rotate: [2, -2, 2]
-                }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                SEO
-              </motion.div>
-              
-              <motion.div
-                className="absolute -bottom-8 -left-8 w-24 h-16 bg-gradient-to-r from-gray-800/80 to-gray-600/80 backdrop-blur-sm rounded-lg border border-gray-400/30 flex items-center justify-center text-white text-xs font-bold"
-                animate={{
-                  y: [10, -10, 10],
-                  rotate: [-2, 2, -2]
-                }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              >
-                WEB
-              </motion.div>
-            </motion.div>
+              <Link href="/work">View Portfolio</Link>
+            </button>
+          </div>
+          {/* Minimal logo */}
+          <div className="mt-16 flex items-center gap-4">
+            <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow">
+              <Image src="/logo2.png" alt="Codly logo" width={64} height={64} priority />
+            </div>
+            <span className="text-white text-2xl font-bold tracking-widest">CODLY</span>
           </div>
         </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-6 h-10 border-2 border-gray-500/50 rounded-full flex justify-center">
-          <motion.div
-            className="w-1 h-3 bg-white rounded-full mt-2"
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
-      </motion.div>
-    </div>
+      </main>
+    </header>
   );
 };
 
 export default Hero;
+
+function randomBetween(min: number, max: number) {
+  return Math.random() * (max - min) + min;
+}
+
